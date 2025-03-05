@@ -1,0 +1,123 @@
+<%- include('../layouts/head.ejs') %>
+  </head>
+
+  <body class="bg-light">
+    <div class="container-fluid">
+      <div class="row bg-dark shadow-sm">
+        <div class="col-md-2 d-flex justify-content-center align-items-center">
+          <img src="/image/Logo_Dai_hoc_Can_Tho.png" alt="logo" height="75px" class="mt-1">
+        </div>
+        <div class="col-md-10 text-white text-center py-3">
+          <h3 class="text-uppercase">Hệ thống quản lý ký túc xá</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 g-0">
+          <%- include('../layouts/sidebar.ejs') %>
+        </div>
+
+        <div class="col-md-7 border-end border-black p-3">
+          <% if (successMessage || errorMessage) { %>
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+              <% if (successMessage) { %>
+                <div class="alert alert-success alert-dismissible fade show shadow rounded" role="alert">
+                  <h5 class="mb-0">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <%= successMessage %>
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+                  <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show shadow rounded mt-2" role="alert">
+                      <h5 class="mb-0">
+                        <i class="bi bi-x-circle-fill me-2"></i>
+                        <%= errorMessage %>
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% } %>
+            </div>
+            <% } %>
+
+              <h3 class="text-center my-2 text-uppercase">Danh sách lớp</h3>
+
+              <div class="border rounded shadow-sm p-3 bg-white" style="max-height: 75vh; overflow-y: auto;">
+                <table class="table table-hover rounded table-bordered text-center align-middle">
+                  <thead class="table-dark text-white position-sticky" style="top: 0; z-index: 900;">
+                    <tr>
+                      <th scope="col">Mã lớp</th>
+                      <th scope="col">Tên lớp</th>
+                      <th scope="col">Thao tác</th>
+                  </thead>
+                  <tbody class="table-striped">
+                    <% allClasses.forEach(cls=> { %>
+                      <tr class="table-light">
+                        <td class="fw-bold">
+                          <%= cls.MaLop %>
+                        </td>
+                        <td>
+                          <%= cls.TenLop %>
+                        </td>
+                        <td>
+                          <form action="/delete-class" method="POST" class="d-inline">
+                            <a href="/edit-class/<%= cls.MaLop %>?edit=true" class="btn btn-sm btn-warning shadow-sm"
+                              style="width: 35px; height: 35px;">
+                              <i class="bi bi-pencil-square" style="font-size: 18px;"></i>
+                            </a>
+                            <input type="hidden" value="<%= cls.MaLop %>" name="maLop">
+                            <button type="submit" class="btn btn-sm btn-danger shadow-sm"
+                              style="width: 35px; height: 35px;">
+                              <i class="bi bi-trash" style="font-size: 18px;"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                      <% }) %>
+                  </tbody>
+                </table>
+              </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm border p-3">
+            <h4 class="text-center mt-2 mb-3 text-uppercase text-success fw-bold">Thông tin lớp</h4>
+            <div class="border rounded p-3 bg-white shadow-sm">
+              <form action="/<% if(editing) {%>update-class<% } else {%>add-class<% } %>" method="POST">
+                <div class="mb-3">
+                  <label for="maLop" class="form-label fw-bold">Mã lớp</label>
+                  <input type="text" id="maLop" name="maLop" required class="form-control shadow-sm"
+                    placeholder="Nhập mã lớp..." value="<% if(editing) { %><%= editClass.MaLop %><% } %>">
+                </div>
+                <div class="mb-3">
+                  <label for="tenLop" class="form-label fw-bold">Tên lớp</label>
+                  <input type="text" id="tenLop" name="tenLop" required class="form-control shadow-sm"
+                    placeholder="Nhập tên lớp..." value="<% if(editing) { %><%= editClass.TenLop %><% } %>">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 shadow-sm">
+                  <%= editing ? 'Cập nhật' : 'Thêm' %>
+                </button>
+              </form>
+            </div>
+
+            <div class="border-top border-black mt-3 pt-3 bg-white shadow-sm rounded">
+              <h5 class="text-center text-uppercase text-secondary fw-bold">Lọc lớp</h5>
+              <form action="/search-class" method="GET" class="mt-2">
+                <div class="mb-3">
+                  <label for="searchMaLop" class="form-label fw-bold">Mã Lớp:</label>
+                  <input type="text" name="searchMaLop" id="searchMaLop" class="form-control shadow-sm"
+                    value="<%= searchMaLopQuery %>" placeholder="Nhập mã lớp...">
+                </div>
+                <div class="mb-3">
+                  <label for="searchTenLop" class="form-label fw-bold">Tên Lớp:</label>
+                  <input type="text" name="searchTenLop" id="searchTenLop" class="form-control shadow-sm"
+                    value="<%= searchTenLopQuery %>" placeholder="Nhập tên lớp...">
+                </div>
+                <button type="submit" class="btn btn-outline-primary w-100 shadow-sm">Tìm kiếm</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%- include('../layouts/end.ejs') %>

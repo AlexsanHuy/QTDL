@@ -1,0 +1,79 @@
+<%- include('../layouts/head.ejs') %>
+  <link rel="stylesheet" href="/css/form.css">
+  </head>
+
+  <body>
+    <main class="main d-flex align-items-center justify-content-center vh-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <% if (errorMessage) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%= errorMessage %>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              <% } %>
+
+                <div class="card shadow-lg border-0 rounded-4">
+                  <div class="card-body p-4">
+                    <h2 class="text-dark fw-bold text-center">Đăng ký</h2>
+
+                    <form action="/register" method="POST" class="mt-4" novalidate>
+                      <div class="mb-1">
+                        <label for="email" class="form-label fw-semibold">Tài khoản</label>
+                        <input type="email"
+                          class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'email') ? 'is-invalid' : '' %>"
+                          name="email" id="email" placeholder="Nhập Email tài khoản" value="<%= oldInput.email %>">
+                      </div>
+
+                      <div class="mb-1">
+                        <label for="password" class="form-label fw-semibold">Mật khẩu</label>
+                        <input type="password"
+                          class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'password') ? 'is-invalid' : '' %>"
+                          name="password" id="password" placeholder="Mật khẩu ít nhất 6 ký tự">
+                      </div>
+
+                      <div class="mb-1">
+                        <label for="confirmPassword" class="form-label fw-semibold">Nhập lại mật khẩu</label>
+                        <input type="password"
+                          class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'confirmPassword') ? 'is-invalid' : '' %>"
+                          name="confirmPassword" id="confirmPassword" placeholder="Nhập lại mật khẩu">
+                      </div>
+
+                      <div class="mb-1">
+                        <label for="name" class="form-label fw-semibold">Họ Tên</label>
+                        <input type="text"
+                          class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'name') ? 'is-invalid' : '' %>"
+                          name="name" id="name" placeholder="Nhập họ tên" value="<%= oldInput.name %>">
+                      </div>
+
+                      <div class="mb-1">
+                        <label for="address" class="form-label fw-semibold">Địa chỉ</label>
+                        <input type="text"
+                          class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'address') ? 'is-invalid' : '' %>"
+                          name="address" id="address" placeholder="Nhập địa chỉ" value="<%= oldInput.address %>">
+                      </div>
+
+                      <div class="mb-1">
+                        <label for="phone" class="form-label fw-semibold">Số điện thoại</label>
+                        <input type="text"
+                          class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'phone') ? 'is-invalid' : '' %>"
+                          name="phone" id="phone" placeholder="Nhập số điện thoại" value="<%= oldInput.phone %>">
+                      </div>
+
+                      <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Đăng ký</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                      <p>Bạn đã có tài khoản? <a href="/" class="text-decoration-none text-success fw-bold">Đăng
+                          nhập</a>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+    <%- include('../layouts/end.ejs') %>

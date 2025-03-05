@@ -1,0 +1,140 @@
+<%- include('../layouts/head.ejs') %>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row bg-dark text-white text-center">
+        <div class="col-md-2">
+          <img src="/image/Logo_Dai_hoc_Can_Tho.png" alt="logo" height="75px" class="mt-1">
+        </div>
+        <div class="col-md-10 text-center py-3">
+          <h3 class="text-uppercase">Hệ thống quản lý ký túc xá</h3>
+        </div>
+      </div>
+      <div class="row">
+
+        <div class="col-md-2 g-0">
+          <%- include('../layouts/sidebar.ejs') %>
+        </div>
+
+        <div class="col-md-7 border-end border-black bg-white">
+          <% if (successMessage || errorMessage) { %>
+            <div class="alert-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+              <% if (successMessage) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <strong><i class="bi bi-check-circle-fill me-2"></i>
+                    <%= successMessage %>
+                  </strong>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <% } %>
+                  <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show mt-2" role="alert">
+                      <strong><i class="bi bi-x-circle-fill me-2"></i>
+                        <%= errorMessage %>
+                      </strong>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <% } %>
+            </div>
+            <% } %>
+
+              <h3 class="text-center my-3 text-uppercase">Danh sách sinh viên</h3>
+              <div class="table-responsive shadow-sm rounded bg-white">
+                <table class="table table-hover table-bordered text-center">
+                  <thead class="table-dark text-white">
+                    <tr>
+                      <th>Mã sinh viên</th>
+                      <th>Họ tên</th>
+                      <th>Số điện thoại</th>
+                      <th>Mã lớp</th>
+                      <th>Giới tính</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% allStudents.forEach(student=> { %>
+                      <tr class="align-middle">
+                        <td class="fw-bold">
+                          <%= student.MaSinhVien %>
+                        </td>
+                        <td>
+                          <%= student.HoTen %>
+                        </td>
+                        <td>
+                          <%= student.SoDienThoai %>
+                        </td>
+                        <td>
+                          <%= student.MaLop %>
+                        </td>
+                        <td>
+                          <%= student.GioiTinh==='M' ? 'Nam' : 'Nữ' %>
+                        </td>
+                        <td>
+                          <a href="/edit-student/<%= student.MaSinhVien %>?edit=true"
+                            class="btn btn-warning btn-sm shadow-sm" style="width: 35px; height: 35px;">
+                            <i class="bi bi-pencil-square" style="font-size: 18px;"></i>
+                          </a>
+                          <form action="/delete-student" method="POST" class="d-inline">
+                            <input type="hidden" name="maSinhVien" value="<%= student.MaSinhVien %>">
+                            <button type="submit" class="btn btn-danger btn-sm shadow-sm"
+                              style="width: 35px; height: 35px;">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                      <% }) %>
+                  </tbody>
+                </table>
+              </div>
+        </div>
+        <div class="col-md-3 bg-white">
+          <div class="card shadow-sm border p-3">
+            <h4 class="text-center my-3 text-uppercase text-success fw-bold">Thông tin sinh viên</h4>
+            <div class="border rounded shadow-sm p-3">
+              <form action="/<% if(editing) {%>update-student<% } else {%>add-student<% } %>" method="POST">
+                <div class="mb-3">
+                  <label class="form-label">Mã sinh viên</label>
+                  <input type="text" class="form-control" required name="maSinhVien" placeholder="Nhập mã sinh viên..."
+                    value="<% if(editing) { %><%= editStudent.MaSinhVien %><% } %>" <% if(editing) { %>readonly<% } %>>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Họ tên</label>
+                  <input type="text" class="form-control" required name="hoTen" placeholder="Nhập họ tên..."
+                    value="<% if(editing) { %><%= editStudent.HoTen %><% } %>">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Số điện thoại</label>
+                  <input type="text" class="form-control" required name="soDienThoai"
+                    placeholder="Nhập số điện thoại..."
+                    value="<% if(editing) { %><%= editStudent.SoDienThoai %><% } %>">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Mã lớp</label>
+                  <select class="form-select" required name="maLop">
+                    <% allClassID.forEach(classId=> { %>
+                      <option value="<%= classId.MaLop %>" <% if(editing && editStudent.MaLop===classId.MaLop) { %>
+                        selected<% } %>>
+                          <%= classId.MaLop %>
+                      </option>
+                      <% }) %>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Giới tính</label>
+                  <select class="form-select" required name="gioiTinh">
+                    <option value="M" <% if(editing && editStudent.GioiTinh==='M' ) { %>selected<% } %>>Nam</option>
+                    <option value="F" <% if(editing && editStudent.GioiTinh==='F' ) { %>selected<% } %>>Nữ</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  <% if(editing) { %>Cập nhật<% } else { %>Thêm<% } %>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('../layouts/end.ejs') %>

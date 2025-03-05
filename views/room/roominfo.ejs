@@ -1,0 +1,222 @@
+<%- include('../layouts/head.ejs') %>
+  </head>
+
+  <body class="bg-light">
+    <div class="container-fluid">
+      <div class="row bg-dark">
+        <div class="col-md-2 text-center p-2">
+          <img src="/image/Logo_Dai_hoc_Can_Tho.png" alt="logo" height="75px">
+        </div>
+        <div class="col-md-10 text-center text-white py-3">
+          <h3 class="text-uppercase mb-0">Hệ thống quản lý ký túc xá</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 g-0">
+          <div class="d-flex flex-column p-3 bg-dark text-white" style="height: 100vh;">
+            <h4 class="text-center">Chức năng</h4>
+            <hr class="border-light">
+            <ul class="nav flex-column">
+              <li class="nav-item mb-2">
+                <a href="/roominfo" class="nav-link text-white <%= path === '/roominfo' ? 'active' : '' %>">
+                  <i class="bi bi-house-fill me-2"></i> Xem thông tin phòng
+                </a>
+              </li>
+            </ul>
+            <hr class="border-light">
+            <form action="/logoutstudent" method="POST" class="text-center">
+              <button type="submit" class="btn btn-danger w-100">
+                <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-md-7 border-end border-black">
+          <% if (errorMessage) { %>
+            <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3 shadow"
+              role="alert">
+              <%= errorMessage %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <% } %>
+              <% if (successMessage) { %>
+                <div class="alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3 shadow"
+                  role="alert">
+                  <%= successMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <% } %>
+
+                  <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-secondary text-white text-center">
+                      <h4 class="mb-0">Thông tin phòng</h4>
+                    </div>
+                    <div class="card-body">
+                      <table class="table table-bordered">
+                        <tbody>
+                          <% if (rental) { %>
+                            <tr>
+                              <th>Mã hợp đồng:</th>
+                              <td>
+                                <%= rental.MaHopDong %>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Mã phòng:</th>
+                              <td>
+                                <%= rental.MaPhong %>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Tên phòng:</th>
+                              <td>
+                                <%= room.TenPhong %>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Bắt đầu:</th>
+                              <td>
+                                <%= rental.BatDau ? new Date(rental.BatDau).toLocaleDateString('vi-VN') : 'N/A' %>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Kết thúc:</th>
+                              <td>
+                                <%= rental.KetThuc ? new Date(rental.KetThuc).toLocaleDateString('vi-VN') : 'N/A' %>
+                              </td>
+                            </tr>
+                            <tr>
+                              <th>Giá thuê:</th>
+                              <td class="text-success fw-bold">
+                                <%= rental.Gia ? rental.Gia.toLocaleString('vi-VN', { style: 'currency' ,
+                                  currency: 'VND' }) : 'N/A' %>
+                              </td>
+                            </tr>
+                            <% } else { %>
+                              <tr>
+                                <td colspan="2" class="text-center text-muted">Không có thông tin phòng thuê.</td>
+                              </tr>
+                              <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="card shadow-sm">
+                    <div class="card-header bg-secondary text-white text-center">
+                      <h4 class="mb-0">Thông tin điện nước</h4>
+                    </div>
+                    <div class="card-body">
+                      <table class="table table-bordered text-center">
+                        <thead class="table-dark">
+                          <tr>
+                            <th>Mã điện nước</th>
+                            <th>Tháng/Năm</th>
+                            <th>Số tiền điện</th>
+                            <th>Số tiền nước</th>
+                            <th>Tiền còn lại</th>
+                            <th>Ngày đóng</th>
+                            <th>Thanh toán</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% utilities.forEach(utility=> { %>
+                            <tr>
+                              <td>
+                                <%= utility.MaDienNuoc %>
+                              </td>
+                              <td>
+                                <%= new Date(utility.ThangNam).toLocaleDateString('vi-VN', { month: '2-digit' ,
+                                  year: 'numeric' }) %>
+                              </td>
+                              <td class="text-danger">
+                                <%= utility.SoTienDien.toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' })
+                                  %>
+                              </td>
+                              <td class="text-primary">
+                                <%= utility.SoTienNuoc.toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' })
+                                  %>
+                              </td>
+                              <td class="text-warning fw-bold">
+                                <%= utility.TienConLai.toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' })
+                                  %>
+                              </td>
+                              <td>
+                                <% if (utility.NgayDong) { %>
+                                  <span class="badge bg-success">
+                                    <%= new Date(utility.NgayDong).toLocaleDateString('vi-VN') %>
+                                  </span>
+                                  <% } else { %>
+                                    <span class="badge bg-danger">Chưa đóng</span>
+                                    <% } %>
+                              </td>
+                              <td>
+                                <% if (!utility.NgayDong) { %>
+                                  <button class="btn btn-primary btn-sm"
+                                    onclick="handlePayment('<%= utility.MaDienNuoc %>')">
+                                    Quét mã QR
+                                  </button>
+                                  <% } %>
+                              </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <div class="card-header bg-secondary text-white text-center">
+              <h4 class="mb-0">Thông tin sinh viên</h4>
+            </div>
+            <div class="card-body">
+              <table class="table table-bordered">
+                <tbody>
+                  <tr>
+                    <th>MSSV:</th>
+                    <td>
+                      <%= student.MaSinhVien %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Họ và tên:</th>
+                    <td>
+                      <%= student.HoTen %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Giới tính:</th>
+                    <td>
+                      <%= student.GioiTinh==='M' ? 'Nam' : 'Nữ' %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Số điện thoại:</th>
+                    <td>
+                      <%= student.SoDienThoai %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Mã lớp:</th>
+                    <td>
+                      <%= student.MaLop %>
+                    </td>
+                  </tr>
+                  <tr>
+                    <th>Tên lớp:</th>
+                    <td>
+                      <%= className %>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('../layouts/end.ejs') %>

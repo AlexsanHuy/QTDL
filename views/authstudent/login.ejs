@@ -1,0 +1,46 @@
+<%- include('../layouts/head.ejs') %>
+  <link rel="stylesheet" href="/css/form.css">
+  </head>
+
+  <body>
+    <main class="main d-flex align-items-center justify-content-center vh-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <% if (errorMessage) { %>
+              <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <%= errorMessage %>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              <% } %>
+
+                <div class="card shadow-lg border-0 rounded-4">
+                  <div class="card-body p-5">
+                    <h2 class="text-dark fw-bold text-center">Xem thông tin phòng</h2>
+                    <p class="text-center text-muted">Nhập mã số sinh viên để xem thông tin phòng ở của bạn</p>
+
+                    <form action="/loginstudent" method="POST" class="mt-4" novalidate>
+                      <div class="mb-3">
+                        <label for="MaSinhVien" class="form-label fw-semibold">Mã số sinh viên</label>
+                        <input type="text"
+                          class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'mssv') ? 'is-invalid' : '' %>"
+                          name="MaSinhVien" id="MaSinhVien" placeholder="Vui lòng nhập mã số sinh viên"
+                          value="<%= oldInput.MaSinhVien %>">
+                      </div>
+
+                      <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Tìm kiếm</button>
+                    </form>
+
+                    <div class="text-center mt-3">
+                      <a href="/" class="text-decoration-none text-success fw-bold">Đăng nhập tài khoản quản trị
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <%- include('../layouts/end.ejs') %>

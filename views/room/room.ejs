@@ -1,0 +1,226 @@
+<%- include('../layouts/head.ejs') %>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row bg-dark text-white text-center">
+        <div class="col-md-2">
+          <img src="/image/Logo_Dai_hoc_Can_Tho.png" alt="logo" height="75px" class="mt-1">
+        </div>
+        <div class="col-md-10 text-white text-center py-3">
+          <h3 class="text-uppercase">Hệ thống quản lý ký túc xá</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 g-0">
+          <%- include('../layouts/sidebar.ejs') %>
+        </div>
+
+        <div class="col-md-7 border-end border-black p-3 bg-white">
+          <% if (successMessage || errorMessage) { %>
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+              <% if (successMessage) { %>
+                <div class="alert alert-success alert-dismissible fade show shadow rounded" role="alert">
+                  <h5 class="mb-0">
+                    <i class="bi bi-check-circle-fill me-2"></i>
+                    <%= successMessage %>
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+                  <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show shadow rounded mt-2" role="alert">
+                      <h5 class="mb-0">
+                        <i class="bi bi-x-circle-fill me-2"></i>
+                        <%= errorMessage %>
+                      </h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% } %>
+            </div>
+            <% } %>
+              <h3 class="text-center text-uppercase my-2">Danh sách phòng</h3>
+              <div class="table-responsive border rounded shadow-sm bg-white p-3"
+                style="max-height: 80vh; overflow-y: auto;">
+                <table class="table table-hover table-bordered text-center">
+                  <thead class="table-dark text-white position-sticky" style="top: 0; z-index: 900;">
+                    <tr>
+                      <th>Mã phòng</th>
+                      <th>Tên phòng</th>
+                      <th>Diện tích (m<sup>2</sup>)</th>
+                      <th>Chỗ trống</th>
+                      <th>Tối đa</th>
+                      <th>Giá thuê</th>
+                      <th>Loại phòng</th>
+                      <th>Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% allRooms.forEach(room=> { %>
+                      <tr class="align-middle">
+                        <td class="fw-bold">
+                          <%= room.MaPhong %>
+                        </td>
+                        <td>
+                          <%= room.TenPhong %>
+                        </td>
+                        <td>
+                          <%= room.DienTich %>
+                        </td>
+                        <td>
+                          <%= room.GiuongTrong %>
+                        </td>
+                        <td>
+                          <%= room.SoGiuong %>
+                        </td>
+                        <td class="text-success fw-bold">
+                          <%= (+room.GiaThue).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' }) %>
+                        </td>
+                        <td>
+                          <%= room.PhongNam_Nu %>
+                        </td>
+                        <td>
+                          <button class="btn btn-dark btn-sm me-1 shadow-sm view-students" data-bs-toggle="modal"
+                            data-bs-target="#studentModal" data-room-id="<%= room.MaPhong %>">
+                            <i class="bi bi-eye-fill" style="font-size: 18px; color: white;"></i>
+                          </button>
+                          <a href="/edit-room/<%= room.MaPhong %>?edit=true"
+                            class="btn btn-warning btn-sm me-1 shadow-sm" style="width: 35px; height: 35px;">
+                            <i class="bi bi-pencil-square" style="font-size: 18px;"></i>
+                          </a>
+                          <form action="/delete-room" method="POST" class="d-inline">
+                            <input type="hidden" value="<%= room.MaPhong %>" name="maPhong">
+                            <button type="submit" class="btn btn-danger btn-sm shadow-sm"
+                              style="width: 35px; height: 35px;">
+                              <i class="bi bi-trash" style="font-size: 18px;"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                      <% }) %>
+                  </tbody>
+                </table>
+              </div>
+        </div>
+
+        <div class="col-md-3 bg-white">
+          <div class="card shadow-sm border p-3">
+            <h4 class="text-center text-uppercase text-success fw-bold">Thông tin phòng</h4>
+            <form action="/<% if(editing) {%>update-room<% } else {%>add-room<% } %>" method="POST">
+              <div class="mb-3">
+                <label class="form-label">Mã phòng</label>
+                <input type="text" class="form-control" name="maPhong" required
+                  value="<% if(editing) { %><%= editRoom.MaPhong %><% } %>" <% if(editing) { %>readonly<% } %>>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Tên phòng</label>
+                <input type="text" class="form-control" name="tenPhong" required
+                  value="<% if(editing) { %><%= editRoom.TenPhong %><% } %>">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Diện tích (m²)</label>
+                <input type="number" class="form-control" name="dienTich" required min="1" max="30"
+                  value="<% if(editing) { %><%= editRoom.DienTich %><% } %>">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Số giường</label>
+                <input type="number" class="form-control" name="soGiuong" required min="1" max="10"
+                  value="<% if(editing) { %><%= editRoom.SoGiuong %><% } %>">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Giá thuê</label>
+                <input type="number" class="form-control" name="giaThue" required min="1"
+                  value="<% if(editing) { %><%= (+editRoom.GiaThue) %><% } %>">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Loại phòng</label>
+                <select class="form-select" name="phongNamNu" required>
+                  <option value="M" <% if(editing && editRoom.PhongNam_Nu=='M' ) { %>selected<% } %>>Nam</option>
+                  <option value="F" <% if(editing && editRoom.PhongNam_Nu=='F' ) { %>selected<% } %>>Nữ</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                <% if(editing) { %>Cập nhật<% } else { %>Thêm<% } %>
+              </button>
+            </form>
+          </div>
+
+          <div class="card shadow-sm border p-3 mt-3">
+            <h4 class="text-center text-uppercase">Tìm kiếm phòng</h4>
+            <form action="/search-room" method="POST">
+              <div class="mb-3">
+                <label class="form-label">Mã phòng</label>
+                <input type="text" class="form-control" name="maPhong">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Tên phòng</label>
+                <input type="text" class="form-control" name="tenPhong">
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Tìm</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('../layouts/end.ejs') %>
+
+      <div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="studentModalLabel">Danh sách sinh viên</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table table-hover table-bordered text-center">
+                <thead class="table-dark">
+                  <tr>
+                    <th>MSSV</th>
+                    <th>Họ tên</th>
+                    <th>Lớp</th>
+                    <th>SĐT</th>
+                    <th>Giới tính</th>
+                  </tr>
+                </thead>
+                <tbody id="studentList">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const studentModal = document.getElementById("studentModal");
+
+          document.querySelectorAll(".view-students").forEach(button => {
+            button.addEventListener("click", function () {
+              const roomId = this.getAttribute("data-room-id");
+
+              fetch(`/getstudent/${roomId}`)
+                .then(response => response.json())
+                .then(data => {
+                  const studentList = document.getElementById("studentList");
+                  studentList.innerHTML = "";
+
+                  if (data.length > 0) {
+                    data.forEach(student => {
+                      const row = `<tr>
+                                    <td>${student.MaSinhVien}</td>
+                                    <td>${student.HoTen}</td>
+                                    <td>${student.MaLop}</td>
+                                    <td>${student.SoDienThoai}</td>
+                                    <td>${student.GioiTinh === 'M' ? 'Nam' : 'Nữ'}</td>
+                                  </tr>`;
+                      studentList.innerHTML += row;
+                    });
+                  } else {
+                    studentList.innerHTML = `<tr><td colspan="5" class="text-center">Không có sinh viên</td></tr>`;
+                  }
+                })
+                .catch(error => console.error("Lỗi tải dữ liệu:", error));
+            });
+          });
+        });
+      </script>

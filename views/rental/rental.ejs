@@ -1,0 +1,201 @@
+<%- include('../layouts/head.ejs') %>
+  </head>
+
+  <body class="bg-light">
+    <div class="container-fluid">
+      <div class="row">
+        <header class="col-12 bg-dark text-white shadow-sm">
+          <div class="row align-items-center">
+            <div class="col-md-2 text-center">
+              <img src="/image/Logo_Dai_hoc_Can_Tho.png" alt="logo" height="75px" class="mt-1">
+            </div>
+            <div class="col-md-10">
+              <h3 class="text-uppercase text-center">Hệ thống quản lý ký túc xá</h3>
+            </div>
+          </div>
+        </header>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 g-0">
+          <%- include('../layouts/sidebar.ejs') %>
+        </div>
+
+        <div class="col-md-7 bg-white pt-4 border-end border-black">
+          <% if (successMessage || errorMessage) { %>
+            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+              <% if (successMessage) { %>
+                <div class="alert alert-success alert-dismissible fade show shadow-lg rounded" role="alert">
+                  <i class="bi bi-check-circle-fill me-2"></i>
+                  <%= successMessage %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <% } %>
+                  <% if (errorMessage) { %>
+                    <div class="alert alert-danger alert-dismissible fade show shadow-lg rounded mt-2" role="alert">
+                      <i class="bi bi-x-circle-fill me-2"></i>
+                      <%= errorMessage %>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <% } %>
+            </div>
+            <% } %>
+
+              <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                  <h3 class="text-center mb-2 text-uppercase my-3">Danh sách thuê phòng</h3>
+                </div>
+                <div class="card-body p-3" style="max-height: 80vh; overflow-y: auto;">
+                  <table class="table table-hover rounded table-bordered text-center align-middle table-responsive">
+                    <thead class="table-dark text-white position-sticky" style="top: 0; z-index: 900;">
+                      <tr>
+                        <th>Mã hợp đồng</th>
+                        <th>Mã sinh viên</th>
+                        <th>Mã phòng</th>
+                        <th>Bắt đầu</th>
+                        <th>Kết thúc</th>
+                        <th>Giá</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% allRentals.forEach(rental=> { %>
+                        <tr class="align-middle">
+                          <td class="fw-bold">
+                            <%= rental.MaHopDong %>
+                          </td>
+                          <td>
+                            <%= rental.MaSinhVien %>
+                          </td>
+                          <td>
+                            <%= rental.MaPhong %>
+                          </td>
+                          <td>
+                            <%= new Date(rental.BatDau).toLocaleDateString('vi-VN', { day: '2-digit' , month: '2-digit'
+                              , year: 'numeric' }) %>
+                          </td>
+                          <td>
+                            <%= new Date(rental.KetThuc).toLocaleDateString('vi-VN', { day: '2-digit' , month: '2-digit'
+                              , year: 'numeric' }) %>
+                          </td>
+                          <td class="text-success fw-bold">
+                            <%= (+rental.Gia).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' }) %>
+                          </td>
+                          <td>
+                            <form action="/delete-rental" method="POST" class="d-inline">
+                              <a href="/edit-rental/<%= rental.MaHopDong %>?edit=true"
+                                class="btn btn-sm btn-warning shadow-sm" style="width: 35px; height: 35px;">
+                                <i class="bi bi-pencil-square" style="font-size: 18px;"></i>
+                              </a>
+                              <input type="hidden" value="<%= rental.MaHopDong %>" name="maHopDong">
+                              <button type="submit" class="btn btn-sm btn-danger shadow-sm"
+                                style="width: 35px; height: 35px;">
+                                <i class="bi bi-trash" style="font-size: 18px;"></i>
+                              </button>
+                            </form>
+                          </td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="card shadow-sm">
+            <div class="card-header bg-white">
+              <h3 class="text-center mb-2 text-uppercase my-3 text-success">Thêm hợp đồng</h3>
+            </div>
+            <div class="card-body p-3">
+              <form action="/<%= editing ? 'update-rental' : 'add-rental' %>" method="POST">
+                <div class="mb-3">
+                  <input type="hidden" readonly name="maHopDong" class="form-control"
+                    value="<% if(editing) { %><%= editRental.MaHopDong %><% } %>">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Mã sinh viên</label>
+                  <select required name="maSinhVien" class="form-select">
+                    <option value="">--Chọn mã sinh viên--</option>
+                    <% allStudents.forEach(student=> { %>
+                      <option value="<%= student.MaSinhVien %>" <%=editing && editRental.MaSinhVien===student.MaSinhVien
+                        ? 'selected' : '' %>>
+                        <%= student.MaSinhVien %> - <%= student.HoTen %>
+                      </option>
+                      <% }) %>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Mã phòng</label>
+                  <select required name="maPhong" class="form-select">
+                    <option value="">--Chọn mã phòng--</option>
+                    <% allRooms.forEach(room=> { %>
+                      <option value="<%= room.MaPhong %>" <%=editing && editRental.MaPhong===room.MaPhong ? 'selected'
+                        : '' %>>
+                        <%= room.MaPhong %> - <%= room.TenPhong %>
+                      </option>
+                      <% }) %>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Bắt đầu</label>
+                  <div class="input-group">
+                    <input type="date" required name="batDau" class="form-control"
+                      value="<%= editing ? new Date(new Date(editRental.BatDau).setHours(12)).toISOString().split('T')[0] : '' %>">
+                    <button type="button" class="btn btn-outline-success"
+                      onclick="this.previousElementSibling.value = new Date().toISOString().split('T')[0]">
+                      <i class="bi bi-calendar-check"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Kết thúc</label>
+                  <div class="input-group">
+                    <input type="date" required name="ketThuc" class="form-control"
+                      value="<%= editing ? new Date(new Date(editRental.KetThuc).setHours(12)).toISOString().split('T')[0] : '' %>">
+                    <button type="button" class="btn btn-outline-success"
+                      onclick="this.previousElementSibling.value = new Date().toISOString().split('T')[0]">
+                      <i class="bi bi-calendar-check"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Giá</label>
+                  <input type="number" min="1" required name="gia" class="form-control"
+                    value="<% if(editing) { %><%= editRental.Gia %><% } %>">
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary flex-grow-1">
+                    <%= editing ? 'Cập nhật' : 'Thêm' %>
+                  </button>
+                  <button type="reset" class="btn btn-outline-danger">Hủy</button>
+                </div>
+              </form>
+              <hr>
+              <h3 class="text-center mb-2 text-uppercase my-3">Tìm kiếm hợp đồng</h3>
+              <form action="/search-rental">
+                <div class="mb-3">
+                  <label class="form-label">Mã hợp đồng</label>
+                  <input type="text" name="searchMaHopDong" class="form-control" value="<%= searchMaHopDong %>">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Mã sinh viên</label>
+                  <input type="text" name="searchMaSinhVien" class="form-control" value="<%= searchMaSinhVien %>">
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Mã phòng</label>
+                  <input type="text" name="searchMaPhong" class="form-control" value="<%= searchMaPhong %>">
+                </div>
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-primary flex-grow-1">Lọc</button>
+                  <button type="reset" class="btn btn-outline-danger">Hủy</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <%- include('../layouts/end.ejs') %>

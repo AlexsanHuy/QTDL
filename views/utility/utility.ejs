@@ -1,0 +1,152 @@
+<%- include('../layouts/head.ejs') %>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row bg-dark align-items-center">
+        <div class="col-md-2 text-center">
+          <img src="/image/Logo_Dai_hoc_Can_Tho.png" alt="logo" height="75px" class="mt-1">
+        </div>
+        <div class="col-md-10 text-white text-center">
+          <h3 class="text-uppercase mb-0">Hệ thống quản lý ký túc xá</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 g-0">
+          <%- include('../layouts/sidebar.ejs') %>
+        </div>
+
+        <div class="col-md-7 border-end border-black position-relative p-3 bg-white">
+          <% if(errorMessage) { %>
+            <div class="alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-3 z-3">
+              <h4>
+                <%= errorMessage %>
+              </h4>
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            <% } %>
+              <% if(successMessage) { %>
+                <div class="alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-3 z-3">
+                  <h4>
+                    <%= successMessage %>
+                  </h4>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                <% } %>
+
+                  <h3 class="text-center text-uppercase">Danh sách hóa đơn</h3>
+                  <div class="table-responsive border border-secondary-subtle rounded p-2"
+                    style="max-height: 70vh; overflow-y: auto;">
+                    <table class="table table-hover table-bordered text-center">
+                      <thead class="table-dark sticky-top">
+                        <tr>
+                          <th>Mã hóa đơn</th>
+                          <th>Mã phòng</th>
+                          <th>Tháng năm</th>
+                          <th>Tiền điện</th>
+                          <th>Tiền nước</th>
+                          <th>Còn lại</th>
+                          <th>Ngày đóng</th>
+                          <th>Thao tác</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <% allUtilities.forEach(utility=> { %>
+                          <tr class="align-middle">
+                            <td class="fw-bold">
+                              <%= utility.MaDienNuoc %>
+                            </td>
+                            <td>
+                              <%= utility.MaPhong %>
+                            </td>
+                            <td>
+                              <%= utility.ThangNam ? new Date(utility.ThangNam).toLocaleDateString('vi-VN') : '' %>
+                            </td>
+                            <td class="fw-bold text-success">
+                              <%= (+utility.SoTienDien).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' })
+                                %>
+                            </td>
+                            <td class="fw-bold text-success">
+                              <%= (+utility.SoTienNuoc).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' })
+                                %>
+                            </td>
+                            <td class="fw-bold text-success">
+                              <%= (+utility.TienConLai).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' })
+                                %>
+                            </td>
+                            <td>
+                              <%= utility.NgayDong ? new Date(utility.NgayDong).toLocaleDateString('vi-VN')
+                                : 'Chưa đóng' %>
+                            </td>
+                            <td>
+                              <form action="/delete-utility" method="POST">
+                                <a href="/edit-utility/<%= utility.MaDienNuoc %>?edit=true"
+                                  class="btn btn-warning btn-sm" style="width: 35px; height: 35px;">
+                                  <i class="bi bi-pencil-square" style="font-size: 18px;"></i>
+                                </a>
+                                <input type="hidden" name="maDienNuoc" value="<%= utility.MaDienNuoc %>">
+                                <button type="submit" class="btn btn-danger btn-sm" style="width: 35px; height: 35px;">
+                                  <i class="bi bi-trash" style="font-size: 18px;"></i>
+                                </button>
+                              </form>
+                            </td>
+                          </tr>
+                          <% }) %>
+                      </tbody>
+                    </table>
+                  </div>
+        </div>
+
+        <div class="col-md-3 p-3 bg-white">
+          <h4 class="text-center text-uppercase text-success">Thông tin điện nước</h4>
+          <form action="/<% if(editing) {%>update-utility<% } else {%>add-utility<% } %>" method="POST">
+            <div class="mb-3">
+              <input type="hidden" id="maDienNuoc" name="maDienNuoc" class="form-control" readonly required
+                value="<% if(editing) { %><%= editUtility.MaDienNuoc %><% } %>">
+            </div>
+            <div class="mb-3">
+              <label for="maPhong" class="form-label">Mã phòng</label>
+              <select id="maPhong" name="maPhong" class="form-select" required>
+                <option value="" selected>--Chọn mã phòng--</option>
+                <% getRoomPayment.forEach(room=> { %>
+                  <option value="<%= room.MaPhong %>" <%=editing && editUtility.MaPhong===room.MaPhong ? 'selected' : ''
+                    %>><%= room.MaPhong %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="thangNam" class="form-label">Tháng năm</label>
+              <div class="input-group">
+                <input type="date" id="thangNam" name="thangNam" class="form-control" required
+                  value="<%= editing ? new Date(new Date(editUtility.ThangNam).setHours(12)).toISOString().split('T')[0] : '' %>">
+                <button type="button" class="btn btn-outline-success"
+                  onclick="this.previousElementSibling.value = new Date().toISOString().split('T')[0]">
+                  <i class="bi bi-calendar-check"></i>
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="soTienDien" class="form-label">Tiền điện</label>
+              <input type="number" id="soTienDien" name="soTienDien" class="form-control" min="1" required
+                value="<%= editing ? editUtility.SoTienDien : '' %>">
+            </div>
+            <div class="mb-3">
+              <label for="soTienNuoc" class="form-label">Tiền nước</label>
+              <input type="number" id="soTienNuoc" name="soTienNuoc" class="form-control" min="1" required
+                value="<%= editing ? editUtility.SoTienNuoc : '' %>">
+            </div>
+            <div class="mb-3">
+              <label for="tienConLai" class="form-label">Tiền còn lại</label>
+              <input type="number" id="tienConLai" name="tienConLai" class="form-control" min="0"
+                value="<%= editing ? editUtility.TienConLai : '' %>">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">
+              <% if(editing) { %>Cập nhật<% } else { %>Thêm<% } %>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <%- include('../layouts/end.ejs') %>

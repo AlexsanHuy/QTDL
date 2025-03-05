@@ -1,0 +1,57 @@
+<%- include('../layouts/head.ejs') %>
+  <link rel="stylesheet" href="/css/form.css">
+  </head>
+
+  <body>
+    <main class="main d-flex align-items-center justify-content-center vh-100">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <% if (errorMessage) { %>
+              <div class="alert alert-danger text-center">
+                <%= errorMessage %>
+              </div>
+              <% } %>
+                <% if (successMessage) { %>
+                  <div class="alert alert-success text-center">
+                    <%= successMessage %>
+                  </div>
+                  <% } %>
+
+                    <div class="card shadow-lg border-0 rounded-4">
+                      <div class="card-body p-5">
+                        <h2 class="text-dark fw-bold text-center">Đăng Nhập</h2>
+                        <p class="text-muted text-center">Vui lòng nhập email và mật khẩu</p>
+
+                        <form action="/login" method="POST" class="mt-4" novalidate>
+                          <div class="mb-3">
+                            <label for="email" class="form-label fw-semibold">Tài khoản</label>
+                            <input type="email"
+                              class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'email') ? 'is-invalid' : '' %>"
+                              name="email" id="email" placeholder="Tên tài khoản" value="<%= oldInput.email %>">
+                          </div>
+
+                          <div class="mb-3">
+                            <label for="password" class="form-label fw-semibold">Mật khẩu</label>
+                            <input type="password"
+                              class="form-control form-control-lg <%= validationErrors.find(e => e.path === 'password') ? 'is-invalid' : '' %>"
+                              name="password" id="password" placeholder="Mật khẩu">
+                          </div>
+
+                          <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">Đăng nhập</button>
+                        </form>
+
+                        <div class="mt-4 text-center">
+                          <p>Nếu bạn là sinh viên? <a href="/loginstudent"
+                              class="text-decoration-none text-primary fw-bold">Nhấn vào đây</a></p>
+                          <p>Bạn chưa có tài khoản? <a href="/register"
+                              class="text-decoration-none text-success fw-bold">Đăng ký</a></p>
+                        </div>
+                      </div>
+                    </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+    <%- include('../layouts/end.ejs') %>

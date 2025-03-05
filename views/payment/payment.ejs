@@ -1,0 +1,141 @@
+<%- include('../layouts/head.ejs') %>
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div class="row bg-dark align-items-center text-white">
+        <div class="col-md-2 text-center">
+          <img src="/image/Logo_Dai_hoc_Can_Tho.png" alt="logo" height="75px" class="mt-1">
+        </div>
+        <div class="col-md-10 text-center">
+          <h3 class="mb-0 text-uppercase">Hệ thống quản lý ký túc xá</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 g-0">
+          <%- include('../layouts/sidebar.ejs') %>
+        </div>
+
+        <div class="col-md-7 bg-white pt-4 border-end border-black">
+          <h3 class="text-center text-uppercase mb-4">Danh sách thanh toán</h3>
+
+          <table class="table table-hover table-bordered text-center shadow-sm">
+            <thead class="bg-primary table-dark text-white">
+              <tr>
+                <th>Mã hợp đồng</th>
+                <th>Tháng/Năm</th>
+                <th>Số tiền</th>
+                <th>Ngày thanh toán</th>
+                <th>Mã nhân viên</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% if (allPayments && allPayments.length> 0) { %>
+                <% allPayments.forEach(payment=> { %>
+                  <tr class="align-middle">
+                    <td class="fw-bold">
+                      <%= payment.MaHopDong %>
+                    </td>
+                    <td>
+                      <%= payment.ThangNam ? new Date(payment.ThangNam).toLocaleDateString('vi-VN') : '' %>
+                    </td>
+                    <td class="fw-bold text-success">
+                      <%= (+payment.SoTien).toLocaleString('vi-VN', { style: 'currency' , currency: 'VND' }) %>
+                    </td>
+                    <td>
+                      <%= payment.NgayThanhToan ? new Date(payment.NgayThanhToan).toLocaleDateString('vi-VN')
+                        : 'Chưa thanh toán' %>
+                    </td>
+                    <td>
+                      <%= payment.MaNhanVien %>
+                    </td>
+                    <td>
+                      <a href="/edit-payment/<%= payment.MaHopDong %>?edit=true" class="btn btn-warning btn-sm"
+                        style="width: 35px; height: 35px;">
+                        <i class="bi bi-pencil-square" style="font-size: 18px;"></i>
+                      </a>
+                      <form action="/delete-payment/<%= payment.MaHopDong %>?_method=DELETE" method="POST"
+                        class="d-inline">
+                        <button type="submit" class="btn btn-danger btn-sm" style="width: 35px; height: 35px;">
+                          <i class="bi bi-trash" style="font-size: 18px;"></i>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% }) %>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="6" class="text-center text-muted"></td>
+                      </tr>
+                      <% } %>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col-md-3 bg-light p-4 border-start">
+          <h5 class="text-center text-uppercase border-top pt-3 text-success fw-bold">
+            <%= editing ? 'Cập nhật thanh toán' : 'Thêm thanh toán' %>
+          </h5>
+
+          <form action="/<%= editing ? 'update-payment' : 'add-payment' %>" method="POST">
+            <div class="mb-3">
+              <label for="MaHopDong" class="form-label">Mã hợp đồng</label>
+              <select id="MaHopDong" name="MaHopDong" class="form-select" <%=editing ? 'readonly' : '' %> required>
+                <option value="">--Chọn mã hợp đồng--</option>
+                <% allContractId.forEach(contract=> { %>
+                  <option value="<%= contract.MaHopDong %>" <%=editing &&
+                    contract.MaHopDong===editTT_ThuePhong.MaHopDong ? 'selected' : '' %>>
+                    <%= contract.MaHopDong %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="ThangNam" class="form-label">Tháng/Năm</label>
+              <input type="date" id="ThangNam" name="ThangNam" class="form-control" required value="<%= (editing && editTT_ThuePhong?.ThangNam) 
+                  ? new Date(editTT_ThuePhong.ThangNam).toLocaleDateString('sv-SE') 
+                  : '' %>">
+            </div>
+            <div class="mb-3">
+              <label for="SoTien" class="form-label">Số tiền</label>
+              <input type="number" id="SoTien" name="SoTien" class="form-control" required
+                value="<%= editing ? editTT_ThuePhong.SoTien : '' %>">
+            </div>
+
+            <div class="mb-3">
+              <label for="NgayThanhToan" class="form-label">Ngày thanh toán</label>
+              <div class="d-flex">
+                <input type="date" id="NgayThanhToan" name="NgayThanhToan" class="form-control"
+                  value="<%= editing && editTT_ThuePhong?.NgayThanhToan ? new Date(editTT_ThuePhong.NgayThanhToan).toLocaleDateString('sv-SE') : '' %>">
+                <button type="button" class="btn btn-success ms-2"
+                  onclick="document.getElementById('NgayThanhToan').value = new Date().toISOString().split('T')[0];">
+                  <i class="bi bi-calendar-check"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="MaNhanVien" class="form-label">Mã nhân viên</label>
+              <select id="MaNhanVien" name="MaNhanVien" class="form-select" required>
+                <option value="">--Chọn mã nhân viên--</option>
+                <% allEmployeeId.forEach(Employee=> { %>
+                  <option value="<%= Employee.MaNhanVien %>" <%=editing &&
+                    Employee.MaNhanVien===editTT_ThuePhong.MaNhanVien ? 'selected' : '' %>>
+                    <%= Employee.MaNhanVien %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+
+            <button type="submit" class="btn <%= editing ? 'btn-primary' : 'btn-primary' %> w-100">
+              <%= editing ? 'Cập nhật' : 'Thêm' %>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <%- include('../layouts/end.ejs') %>
+  </body>

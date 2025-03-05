@@ -1,0 +1,55 @@
+<div class="d-flex flex-column p-4 bg-dark text-white vh-100">
+  <h3 class="d-flex align-items-center mb-4 text-white">
+    <span class="fs-4 fw-bold">Chức năng</span>
+  </h3>
+
+  <ul class="nav nav-pills flex-column mb-5">
+    <li class="nav-item">
+      <a href="/dashboard" class="nav-link <%= path === '/dashboard' ? 'active' : 'text-white' %>">
+        <i class="bi bi-speedometer2 me-2"></i>Trang quản trị
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/room" class="nav-link <%= path === '/room' ? 'active' : 'text-white' %>">
+        <i class="bi bi-door-open me-2"></i>Quản lý phòng
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/student" class="nav-link <%= path === '/student' ? 'active' : 'text-white' %>">
+        <i class="bi bi-person-lines-fill me-2"></i>Quản lý sinh viên
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/employees" class="nav-link <%= path === '/employees' ? 'active' : 'text-white' %>">
+        <i class="bi bi-people-fill me-2"></i>Quản lý nhân viên
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/class" class="nav-link <%= path === '/class' ? 'active' : 'text-white' %>">
+        <i class="bi bi-book-half me-2"></i>Quản lý lớp
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/rental" class="nav-link <%= path === '/rental' ? 'active' : 'text-white' %>">
+        <i class="bi bi-house-door me-2"></i>Hợp đồng
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/payment" class="nav-link <%= path === '/payment' ? 'active' : 'text-white' %>">
+        <i class="bi bi-credit-card me-2"></i>Thanh toán
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/utility" class="nav-link <%= path === '/utility' ? 'active' : 'text-white' %>">
+        <i class="bi bi-lightning-fill me-2"></i>Điện nước
+      </a>
+    </li>
+  </ul>
+
+  <hr>
+  <form action="/logout" method="POST">
+    <button type="submit" class="btn btn-danger btn-lg w-100">
+      <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+    </button>
+  </form>
+</div>
