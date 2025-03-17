@@ -30,7 +30,7 @@ const Utility = {
         await db.query(sql, [maDienNuoc])
     },
     updatePaymentStatus: async function (maDienNuoc) {
-        const sql = 'CALL ThanhToanHoaDonDienNuoc(?)';
+        const sql = 'CALL ThanhToan(?)';
         const [result] = await db.query(sql, [maDienNuoc]);
         return result;
     },

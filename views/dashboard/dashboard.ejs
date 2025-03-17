@@ -86,7 +86,7 @@
 
                   </div>
                   <div class="row bg-white p-2">
-                    <div style="width: 70%; margin: auto;">
+                    <div style="width: 40%; margin: auto;">
                       <canvas id="doanhThuDienNuocChart"></canvas>
                     </div>
                   </div>
@@ -95,99 +95,57 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-      // Giả sử dữ liệu JSON của bạn được nhúng từ EJS hoặc phía server
       const jsonString = `<%- JSON.stringify(totalRevenueByMonth) %>`;
-
-      // Phân tích chuỗi JSON thành đối tượng JavaScript
+      const jsonString2 = `<%- JSON.stringify(totalRevenue) %>`;
       const revenueData = JSON.parse(jsonString);
+      const revenueData2 = JSON.parse(jsonString2);
 
-      // Khởi tạo các mảng để lưu dữ liệu
-      const months = [];
-      const revenueDien = [];
-      const revenueNuoc = [];
-      const totalRevenue = [];
+      let revenueDien = 0;
+      let revenueNuoc = 0;
+      let revenuePhong = 0;
+      let totalRevenue = 0;
 
-      // Lặp qua dữ liệu để lấy doanh thu của từng tháng
       revenueData.forEach(data => {
-        months.push(data.Thang);
-        revenueDien.push(data.TongTienDien);
-        revenueNuoc.push(data.TongTienNuoc);
-        totalRevenue.push(data.TongDoanhThu);
+        revenueDien += data.TongTienDien;
+        revenueNuoc += data.TongTienNuoc;
+        revenuePhong += revenueData2;
+        totalRevenue += data.TongDoanhThu;
       });
 
-      // Khởi tạo biểu đồ Chart.js
       const ctx = document.getElementById('doanhThuDienNuocChart').getContext('2d');
       new Chart(ctx, {
-        type: 'bar',
+        type: 'pie',
         data: {
-          labels: months,
-          datasets: [
-            {
-              label: 'Doanh thu tiền điện (VND)',
-              data: revenueDien,
-              backgroundColor: 'rgba(30, 136, 229, 0.7)',
-              borderColor: 'rgba(30, 136, 229, 1)',
-              borderWidth: 1
-            },
-            {
-              label: 'Doanh thu tiền nước (VND)',
-              data: revenueNuoc,
-              backgroundColor: 'rgba(46, 204, 113, 0.7)',
-              borderColor: 'rgba(46, 204, 113, 1)',
-              borderWidth: 1
-            },
-            {
-              label: 'Tổng doanh thu (VND)',
-              data: totalRevenue,
-              backgroundColor: 'rgba(241, 196, 15, 0.7)',
-              borderColor: 'rgba(241, 196, 15, 1)',
-              borderWidth: 1
-            }
-          ]
+          labels: ['Doanh thu tiền điện', 'Doanh thu tiền nước', 'Doanh thu phòng'],
+          datasets: [{
+            data: [revenueDien, revenueNuoc, revenuePhong],
+            backgroundColor: ['rgba(30, 136, 229, 0.7)', 'rgba(46, 204, 113, 0.7)', 'rgba(241, 196, 15, 0.7)'],
+            borderColor: ['rgba(30, 136, 229, 1)', 'rgba(46, 204, 113, 1)', 'rgba(241, 196, 15, 1)'],
+            borderWidth: 1
+          }]
         },
         options: {
           responsive: true,
           plugins: {
             title: {
               display: true,
-              text: 'Doanh thu điện nước theo tháng',
-              color: 'black',
-              font: {
-                size: 30
-              }
+              text: 'Tỷ lệ doanh thu - ' + revenueData[0].Thang,
+              font: { size: 20 }
             },
             legend: {
-              display: true,
-              position: 'top'
+              position: 'bottom'
             },
             tooltip: {
               callbacks: {
                 label: function (context) {
-                  return context.dataset.label + ': ' + new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.raw);
+                  return context.label + ': ' + new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(context.raw);
                 }
-              }
-            }
-          },
-          scales: {
-            x: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Tháng',
-                color: 'black'
-              }
-            },
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: 'Doanh thu (VND)',
-                color: 'black'
               }
             }
           }
         }
       });
+
     </script>
 
     <%- include('../layouts/end.ejs') %>

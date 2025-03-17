@@ -47,7 +47,7 @@ exports.deleteRental = async (req, res, next) => {
         req.flash('success', 'Xóa rental thành công!')
         res.redirect('/rental')
     } catch (error) {
-        console.error('Lỗi khi xóa rental:', error)
+        console.error('Lỗi khi xóa:', error)
         req.flash('error', 'Lỗi khi xóa rental')
         res.redirect('/rental')
     }
@@ -89,8 +89,8 @@ exports.updateRental = async (req, res, next) => {
         req.flash('success', 'Cập nhật rental thành công!')
         res.redirect('/rental')
     } catch (error) {
-        console.error('Lỗi khi cập nhật rental:', error)
-        req.flash('error', 'Lỗi khi cập nhật rental')
+        console.error('Lỗi khi cập nhật:', error)
+        req.flash('error', 'Lỗi khi cập nhật')
         res.redirect('/rental')
     }
 }
@@ -116,7 +116,7 @@ exports.searchRental = async (req, res, next) => {
             editing: false
         })
     }catch (error) {
-        req.flash('error', 'Lỗi khi tìm kiếm rental')
+        req.flash('error', 'Lỗi khi tìm kiếm')
         res.redirect('/rental')
     }
 }
