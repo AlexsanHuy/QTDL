@@ -31,9 +31,16 @@ exports.addRental = async (req, res, next) => {
     const KetThuc = req.body.ketThuc
     const Gia = req.body.gia
     try {
-        await Rental.addRental(MaSinhVien, MaPhong, BatDau, KetThuc, Gia)
-        req.flash('success', 'Thêm rental thành công!')
-        res.redirect('/rental')
+        const checkRental = await Rental.checkRental(MaPhong)
+        const getRoom = await Room.getRoom(MaPhong)
+        if(checkRental.length == getRoom[0].SoGiuong){
+            req.flash('error', 'Phòng đã đầy')
+            res.redirect('/rental')
+        }else{
+            await Rental.addRental(MaSinhVien, MaPhong, BatDau, KetThuc, Gia)
+            req.flash('success', 'Thêm rental thành công!')
+            res.redirect('/rental')
+        }
     } catch (error) {
         console.error('Lỗi khi thêm rental:', error.sqlMessage)
         req.flash('error', error.sqlMessage)

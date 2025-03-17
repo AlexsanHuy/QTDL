@@ -34,6 +34,11 @@ const Rental = {
         const [result] = await db.query(sql, [MaSinhVien])
         return result
     },
+    checkRental: async function (MaPhong){
+        const sql = 'SELECT * FROM phong JOIN thuephong ON phong.MaPhong = thuephong.MaPhong WHERE phong.MaPhong = ?'
+        const [result] = await db.query(sql, [MaPhong])
+        return result
+    }
     
 }
 module.exports = Rental
