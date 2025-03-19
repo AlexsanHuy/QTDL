@@ -22,7 +22,7 @@ exports.addClass = async (req, res, next) => {
     const tenLop = req.body.tenLop
     try {
       await Class.addClass(maLop,tenLop)
-      req.flash('success', 'Thêm phòng thành công!')
+      req.flash('success', 'Thêm lớp thành công!')
       res.redirect('/class')
     } catch(err) {
       console.log(err)

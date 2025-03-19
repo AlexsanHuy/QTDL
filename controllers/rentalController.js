@@ -38,11 +38,11 @@ exports.addRental = async (req, res, next) => {
             res.redirect('/rental')
         }else{
             await Rental.addRental(MaSinhVien, MaPhong, BatDau, KetThuc, Gia)
-            req.flash('success', 'Thêm rental thành công!')
+            req.flash('success', 'Thêm thành công!')
             res.redirect('/rental')
         }
     } catch (error) {
-        console.error('Lỗi khi thêm rental:', error.sqlMessage)
+            console.error('Lỗi khi thêm:', error.sqlMessage)
         req.flash('error', error.sqlMessage)
         res.redirect('/rental')
     }
@@ -51,11 +51,11 @@ exports.deleteRental = async (req, res, next) => {
     const MaHopDong = req.body.maHopDong
     try {
         await Rental.deleteRental(MaHopDong)
-        req.flash('success', 'Xóa rental thành công!')
+        req.flash('success', 'Xóa thành công!')
         res.redirect('/rental')
     } catch (error) {
         console.error('Lỗi khi xóa:', error)
-        req.flash('error', 'Lỗi khi xóa rental')
+        req.flash('error', 'Lỗi khi xóa')
         res.redirect('/rental')
     }
 }
@@ -93,7 +93,7 @@ exports.updateRental = async (req, res, next) => {
     const Gia = req.body.gia
     try {
         await Rental.updateRental(MaHopDong, MaSinhVien, MaPhong, BatDau, KetThuc, Gia)
-        req.flash('success', 'Cập nhật rental thành công!')
+        req.flash('success', 'Cập nhật thành công!')
         res.redirect('/rental')
     } catch (error) {
         console.error('Lỗi khi cập nhật:', error)
